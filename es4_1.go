@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 const MAXBUFF = 3
@@ -39,7 +40,7 @@ func client(myid int) {
 	var dir int = rand.Intn(2)      //rand between 0 inclusive - 2 esclusive
 
 	fmt.Printf("[user/èPedone %d/%d]inizializzazione  %d direzione %d in secondi %d \n", myid, userType, myid, dir, tt)
-	//time.Sleep(time.Duration(tt) * time.Second)
+	time.Sleep(time.Duration(tt) * time.Second)
 	if dir == N { // asynchronous send
 		if userType == BRIDGE_USER_TYPE_CAR {
 			entryCarGateN <- myid
@@ -48,8 +49,8 @@ func client(myid int) {
 		}
 		<-ACK[myid] // waiting server ack
 		fmt.Printf("[user/èPedone %d/%d]  entrato sul ponte in direzione  NORD\n", myid, userType)
-		//tt = rand.Intn(5)
-		//time.Sleep(time.Duration(tt) * time.Second)
+		tt = rand.Intn(5)
+		time.Sleep(time.Duration(tt) * time.Second)
 		if userType == BRIDGE_USER_TYPE_CAR {
 			exitCarGateN <- myid
 		} else {
@@ -64,8 +65,8 @@ func client(myid int) {
 		}
 		<-ACK[myid] // waiting server ack
 		fmt.Printf("[user/èPedone %d/%d]  entrato sul ponte in direzione  SOUTH\n", myid, userType)
-		//tt = rand.Intn(5)
-		//time.Sleep(time.Duration(tt) * time.Second)
+		tt = rand.Intn(5)
+		time.Sleep(time.Duration(tt) * time.Second)
 		if userType == BRIDGE_USER_TYPE_CAR {
 			exitCarGateS <- myid
 		} else {
