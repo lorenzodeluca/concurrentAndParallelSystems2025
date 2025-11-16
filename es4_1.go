@@ -101,8 +101,8 @@ func server() {
 			carsOnTheBridgeCounter <- x
 			ACK[x] <- 1
 
-		//to check for south car entry: capacity, cars on the opposite dir, south walker priority, south car priority, nord walker priority
-		case x := <-when((cap < MAX) && !isCarOnTheBridgeS && (len(entryWalkerGateS) == 0) && (len(entryCarGateS) == 0) && (len(entryWalkerGateN) == 0), entryWalkerGateN):
+		//to check for north car entry: capacity, cars on the opposite dir, south walker priority, south car priority, nord walker priority
+		case x := <-when((cap < MAX) && !isCarOnTheBridgeS && (len(entryWalkerGateS) == 0) && (len(entryCarGateS) == 0) && (len(entryWalkerGateN) == 0), entryCarGateN):
 			cap += 10
 			isCarOnTheBridgeN = true
 			carsOnTheBridgeCounter <- x
