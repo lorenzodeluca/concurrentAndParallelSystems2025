@@ -1,0 +1,8 @@
+Si consideri un ponte a senso unico alternato con capacità limitata a
+MAX veicoli.
+Ogni veicolo che vuole entrare dalla direzione X è autorizzato se:
+–c’è posto sul ponte (il numero di veicoli è minore di MAX)
+–non ci sono veicoli in direzione opposta a X.
+Realizzare un’applicazione distribuita in ADA in cui i veicoli siano
+rappresentati da task concorrenti (clienti) e la gestione del ponte sia
+affidata ad un task (servitore). 

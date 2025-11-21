@@ -1,0 +1,101 @@
+V "GNAT Lib v13"
+M P W=b
+P ZX
+
+RN
+RV NO_DELAY
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_FIXED_POINT
+RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_RELATIVE_DELAY
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_TASK_HIERARCHY
+RV NO_TASKING
+RV NO_DEFAULT_INITIALIZATION
+RV MAX_TASK_ENTRIES=1
+RV MAX_TASKS=1+
+
+U hotdog%b		HotDog.adb		3e86bec4 NE OO SU
+W ada%s			ada.ads			ada.ali
+Z ada.calendar.delays%s	a-caldel.adb		a-caldel.ali
+Z ada.real_time%s	a-reatim.adb		a-reatim.ali
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+Z system%s		system.ads		system.ali
+Z system.parameters%s	s-parame.adb		s-parame.ali
+Z system.soft_links%s	s-soflin.adb		s-soflin.ali
+Z system.task_info%s	s-tasinf.adb		s-tasinf.ali
+Z system.tasking%s	s-taskin.adb		s-taskin.ali
+Z system.tasking.rendezvous%s  s-tasren.adb	s-tasren.ali
+Z system.tasking.stages%s  s-tassta.adb		s-tassta.ali
+
+D ada.ads		20240521074738 76789da1 ada%s
+D a-calend.ads		20240904144414 e6961b4c ada.calendar%s
+D a-caldel.ads		20240521074737 9f20b83d ada.calendar.delays%s
+D a-except.ads		20240521074738 2a7d8d70 ada.exceptions%s
+D a-finali.ads		20240521074738 bf4f806b ada.finalization%s
+D a-ioexce.ads		20240521074738 40018c65 ada.io_exceptions%s
+D a-reatim.ads		20240521074737 b89a10c3 ada.real_time%s
+D a-stream.ads		20240521074738 119b8fb3 ada.streams%s
+D a-string.ads		20240521074738 90ac6797 ada.strings%s
+D a-sttebu.ads		20240521074738 f1ad67a2 ada.strings.text_buffers%s
+D a-stuten.ads		20240521074738 c6ced0ae ada.strings.utf_encoding%s
+D a-tags.ads		20240521074738 9eaa38c6 ada.tags%s
+D a-textio.ads		20240521074738 5c2c6153 ada.text_io%s
+D a-unccon.ads		20240521074738 0e9b276f ada.unchecked_conversion%s
+D HotDog.adb		20251121090453 62aadf97 hotdog%b
+D interfac.ads		20240521074738 15f799c2 interfaces%s
+D i-c.ads		20240521074738 5c5a6c17 interfaces.c%s
+D i-cstrea.ads		20240521074738 e53d8b8e interfaces.c_streams%s
+D system.ads		20240521074738 426dafb8 system%s
+D s-atacco.ads		20240521074738 903317eb system.address_to_access_conversions%s
+D s-c_time.ads		20240904144414 535885c5 system.c_time%s
+D s-crtl.ads		20240521074738 8a0692f8 system.crtl%s
+D s-exctab.ads		20240521074738 91bef6ef system.exception_table%s
+D s-ficobl.ads		20240521074738 dc5161d4 system.file_control_block%s
+D s-finroo.ads		20240521074738 4ff27390 system.finalization_root%s
+D s-linux.ads		20240904144414 96312dab system.linux%s
+D s-multip.ads		20240521074738 38ac9f73 system.multiprocessors%s
+D s-oscons.ads		20240904144414 ece202eb system.os_constants%s
+D s-osinte.ads		20240904144414 a8f58951 system.os_interface%s
+D s-parame.ads		20240904144414 1f39ba92 system.parameters%s
+D s-putima.ads		20240521074738 17291fe4 system.put_images%s
+D s-secsta.ads		20240521074738 578279f5 system.secondary_stack%s
+D s-soflin.ads		20240521074738 df77073e system.soft_links%s
+D s-stache.ads		20240521074738 0b81c1fe system.stack_checking%s
+D s-stausa.ads		20240521074738 5be75682 system.stack_usage%s
+D s-stalib.ads		20240521074738 1c9580f6 system.standard_library%s
+D s-stoele.ads		20240521074738 ab5468e4 system.storage_elements%s
+D s-stoele.adb		20240521074738 8f5a9db6 system.storage_elements%b
+D s-tasinf.ads		20240521074737 528dde74 system.task_info%s
+D s-taspri.ads		20240521074737 4ec891e7 system.task_primitives%s
+D s-taprop.ads		20240521074737 6eefbe12 system.task_primitives.operations%s
+D s-taskin.ads		20240521074737 0ec7ab0b system.tasking%s
+D s-taprob.ads		20240521074737 acd6094d system.tasking.protected_objects%s
+D s-tpoben.ads		20240521074737 60ad3dae system.tasking.protected_objects.entries%s
+D s-tasren.ads		20240521074737 a67a9949 system.tasking.rendezvous%s
+D s-tassta.ads		20240521074737 cca55c94 system.tasking.stages%s
+D s-traent.ads		20240521074738 c81cbf8c system.traceback_entries%s
+D s-unstyp.ads		20240521074738 fa2a7f59 system.unsigned_types%s
+D s-wchcon.ads		20240521074738 d9032363 system.wch_con%s
+G a e
+G c Z b b [hotdog standard 4 11 none]
+X 1 ada.ads
+16K9*Ada 20e8 15|1r6 2r5
+X 13 a-textio.ads
+58K13*Text_IO 787e16 15|1w10 2r9
+282U14*New_Line 15|15s17 25s9
+519U14*Put 15|14s17
+566U14*Put_Line 15|16s17 24s9
+X 15 HotDog.adb
+4U11*HotDog 4b11 27l5 27t11
+5t10 Gourmet 9b15 19l9 19t16 22r9
+6Y15 Make_A_Hot_Dog 12b20 17l17 17t31 22s17
+11i13 Index{integer}
+21i9 Index{integer}
+X 35 s-stausa.ads
+207U14*Initialize 208i<c,__gnat_stack_usage_initialize>22
+272U14*Output_Results 276i<c,__gnat_stack_usage_output_results>22
+

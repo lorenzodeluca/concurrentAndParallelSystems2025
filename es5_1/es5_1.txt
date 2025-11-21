@@ -1,0 +1,19 @@
+Si consideri l’ufficio di relazioni con il pubblico (URP) di una grande città.
+L’ufficio è costituito da N sportelli, attraverso i quali è in grado di fornire al pubblico
+2 tipi di prestazione:
+•Informazioni turistiche (TUR)
+•Informazioni su eventi (EVE)
+Ogni sportello può eseguire un servizio alla volta (di qualunque tipo).
+Per semplicità, si assuma che ogni utente richieda un solo servizio alla volta.
+Si assuma inoltre che la permanenza di un utente allo sportello abbia una durata
+non trascurabile.
+L’accesso degli utenti agli sportelli è regolato dai seguenti vincoli:
+•l’erogazione di un servizio a un utente presuppone l’acquisizione di uno sportello
+libero da parte dell’utente richiedente. 
+64
+Realizzare un’applicazione nel linguaggio Ada, nella quale utenti e
+ufficio siano rappresentati task concorrenti.
+La sincronizzazione tra i processi dovrà tenere conto dei vincoli dati ed
+inoltre della seguente politica di priorità:
+le richieste di informazioni turistiche (TUR) devono avere la precedenza
+sulle richieste di tipo EVE. 

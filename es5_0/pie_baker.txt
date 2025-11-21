@@ -1,0 +1,34 @@
+Si consideri il laboratorio di un’azienda artigianale che produce dolci.
+L’azienda è specializzata nella produzione di torte; in particolare, i tipi di
+torte prodotti sono 2:
+– Torta al cioccolato,
+– Crostata alla marmellata.
+Le torte vengono vendute in scatole pre-confezionate. L’azienda
+commercializza 3 tipi di confezioni:
+– confezione semplice “Cioccolato”, contenente 1 torta al cioccolato;
+– confezione semplice “Marmellata”, contenente 1 crostata.
+– Confezione multipla “Famiglia”, contenente 1 torta al cioccolato e 1
+crostata.
+51
+Nel laboratorio dell’azienda vi è un tavolo per il deposito delle torte in attesa di
+essere confezionate al quale accedono:
+– gli operai dedicati alla produzione (OP), che accedono ciclicamente al
+tavolo per depositarvi ogni torta appena sfornata; ogni OP deposita sul
+tavolo 1 torta alla volta.
+– gli operai dedicati alle confezioni (OC), ognuno dedicato alla confezione di
+scatole di un tipo predefinito dato (Cioccolato, Marmellata o Famiglia); essi
+accedono ciclicamente al tavolo per prelevare la/le torte necessaria/e a
+realizzare la confezione del tipo assegnato.
+Il tavolo ha una capacità massima pari a MaxC, costante che esprime il massimo
+numero di torte che possono stare contemporaneamente su di esso.
+52
+Si sviluppi un’applicazione distribuita ADA, che rappresenti operai (clienti)
+e gestore del tavolo (server) con task concorrenti. L’applicazione deve
+realizzare una politica di gestione del tavolo che soddisfi i vincoli dati e
+che, inoltre, soddisfi i seguenti vincoli di priorità:
+•tra gli operai OP: i produttori di crostate siano favoriti rispetto ai
+produttori di torte al cioccolato;
+•tra gli operai OC: gli operai dedicati alla confezione di scatole Famiglia
+siano favoriti rispetto a quelli dedicati alle scatole semplici (Cioccolato,
+Marmellata); inoltre, tra gli OC dedicati alle confezioni semplici, venga
+data priorità alle confezioni “Marmellata”.
