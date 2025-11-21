@@ -1,0 +1,88 @@
+In un’area naturalistica è disponibile un servizio di noleggio bici a disposizione dei visitatori.
+Il servizio dispone complessivamente di:
+• NB biciclette tradizionali
+• NE e-bike.
+Le richieste dei clienti possono essere di 3 tipi:
+1. BT: richiesta di una bici tradizionale
+2. EB: richiesta di una e-bike
+3. FLEX: richiesta flessibile, ovvero:
+ viene richiesta una e-bike:
+1. se c’è un’e-bike disponibile, il cliente ottiene l’e-bike.
+2. se non ci sono e-bike disponibili, e ce n’è almeno una tradizionale, il cliente ottiene una bici tradizionale;
+3. se non ci sono bici disponibili (di nessun tipo), il cliente attende un’e-bike.
+Realizzare un’applicazione concorrente nel linguaggio go, nella quale ogni cliente e il gestore del noleggio siano
+rappresentati da goroutine distinte.
+La soluzione non deve utilizzare le guardie logiche. 
+23
+Impostazione
+cliente
+Gestore
+Noleggio
+rilascio(B)
+richiesta(tipo)
+allocazione
+bici B
+1
+2
+3
+24
+Impostazione
+Quali e quante goroutine?
+– 1 Server (gestore delle bici)
+– N Client (uno per ogni visitatore)
+Quali e quanti canali?
+– il server riceve le richieste su:
+• 1 canale richiesta: molti a uno per la richiesta(tipo), dove tipo ∈ {𝑩𝑻, 𝑬𝑩, 𝑭𝑳𝑬𝑿}
+– il server riceve i rilasci su:
+• 1 canale rilascio:molti a uno per il rilascio(bici), dove bici ∈ {𝑩𝑻, 𝑬𝑩}
+– a seguito di una richiesta, ogni client attende il messaggio di allocazione:
+• N canali risorsa (1 per ogni cliente) : (Server->Client):
+– canali per la sincronizzazione padre-figli
+• done: attesa della terminazione delle goroutine (goroutine>main)
+• termina: messaggio di terminazione al server (main ->server)
+25
+Struttura del Server (soluzione senza guardie logiche)
+var richiesta = make(chan req) // quale tipo per req?
+var rilascio = make(chan bici) //quale tipo per bici?
+var risorsa [MAXPROC]chan bici
+var done = make(chan int)
+var termina = make(chan int)
+func server() {
+<var locali: bici disponibili, ecc.>
+for {
+ select {
+case r = <-richiesta:
+ <gestione della richiesta di allocazione di una risorsa, in base al tipo di
+richiesta pervenuta: FLEX, EB, BT>
+case b = <-rilascio:
+ < rilascio della bici b>
+case <-termina: // quando tutti i processi clienti hanno finito, il server termina
+done <- 1 //comunicazione al main: il server sta terminando
+return
+ } } }
+26
+Struttura del Client
+func client(r req, id int) {
+var b bici
+richiesta <- r //invio richiesta - r è il tipo: BT, EB o FLEX
+b = <-risorsa[id] //allocazione della bici del tipo b: BT o EB
+<uso della risorsa>
+rilascio <- b //restituzione della bici
+done <- .. //comunicazione al main: il client sta terminando
+}
+27
+Struttura del main
+func main() {
+//inizializzazione canali
+...
+go server()
+for i := 0; i < Nclienti; i++ {
+<definizione tipo richiesta per il cliente i>
+go client(r, i)
+}
+for i := 0; i < Nclienti; i++ { // attesa terminazione clienti
+<-done
+}
+termina <- 1 //terminazione server
+<-done // attesa terminazione server
+}

@@ -1,0 +1,59 @@
+Si consideri un ponte che collega le due rive di un fiume.
+• Al ponte possono accedere due tipi di utenti: auto e pedoni.
+• Il ponte ha una capacita` massima MAX che esprime il numero massimo di «persone
+equivalenti» che possono transitare contemporaneamente su di esso; a questo scopo
+si assuma che ogni pedone equivalga a una «persona equivalente», e ogni auto
+equivalga a 10 «persone equivalenti».
+• Il ponte è talmente stretto che il transito di un’auto in una particolare direzione d
+impedisce l'accesso al ponte di ogni altro utente (auto o pedone) in direzione opposta
+a d.
+Realizzare una politica di sincronizzazione delle entrate e delle uscite dal ponte che
+tenga conto delle specifiche date, e che nell'accesso al ponte dia la precedenza ai
+pedoni rispetto alle auto:
+– tra i pedoni, vengano favoriti quelli provenienti da Sud;
+– tra le auto vengano favorite quelle provenienti da Sud.
+23
+Impostazione
+Gestore
+Ponte
+Auto j (SUD)
+Uscita_Auto_S
+(3)
+Entrata_auto_S
+(1)
+Auto i
+(NORD)
+Uscita_Auto_N (3)
+Entrata_Auto_N (1)
+ack_A[i]
+(2)
+ack_A[j]
+(2)
+chan
+24
+Impostazione
+Gestore
+Ponte
+Pedone j
+(SUD)
+Uscita_pedone_S
+(3)
+Entrata_pedone_S
+(1)
+Pedone i
+(NORD)
+Uscita_pedone_N (3)
+Entrata_pedone_N (1)
+ack_P[i]
+(2)
+ack_P[j]
+(2)
+chan
+25
+Vincoli
+• Capacità: l’accesso al ponte di un utente non deve causare il superamento del
+limite massimo MAX
+• Direzione: se c’è almeno un’auto sul ponte in direzione d, nessun utente può
+percorrere il ponte in direzione opposta a d.
+• Priorità: un utente non può accedere al ponte se vi sono utenti più prioritari in
+attesa:
