@@ -1,0 +1,20 @@
+• squeue consente di verificare lo stato dei job schedulati :
+$ squeue –u <username>
+
+→viene fornita la lista di tutti i job dell’utente con il loro stato corrente (idle,
+pending, running, closing...)
+
+• scontrol permette di ottenere informazioni dettagliate su un job :
+$ scontrol show job <job_id>
+
+• scancel elimina un job dalla coda (se non ancora running), oppure lo
+termina forzatamente:
+$ scancel <job_id>
+
+
+La submission di un job viene richiesta con l’esecuzione del relativo
+SLURM Script, tramite il comando slurm sbatch:
+$ sbatch <nome_script>
+
+
+per compilare: mpiicc -std=c99 sommavet.c –o sommavet
