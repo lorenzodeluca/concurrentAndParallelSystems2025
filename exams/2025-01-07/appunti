@@ -1,0 +1,18 @@
+/*
+bool        -> %t
+int, int*   -> %d
+uint, uint*-> %d
+float32/64 -> %f
+string     -> %s
+byte       -> %c
+rune       -> %c
+
+array      -> %v
+slice      -> %v
+map        -> %v
+struct     -> %v   (%+v campi, %#v Go-syntax)
+
+pointer    -> %p
+any type   -> %v
+type       -> %T
+*/
