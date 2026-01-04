@@ -1,0 +1,39 @@
+Si consideri lo stabilimento di produzione di una casa automobilistica.
+La produzione di ogni automobile avviene attraverso varie fasi in sequenza e si realizza in modo completamente automatico,
+grazie all’attività di sistemi automatici e robotici che eseguono le varie fasi.
+Si consideri, in particolare, la fase di montaggio delle ruote, che prevede l’installazione di 4 cerchi e 4 pneumatici per ogni auto.
+Nello stabilimento considerato vengono prodotti 2 modelli di auto (modelloA e modelloB) che montano ruote e cerchi diversi.
+In particolare:
+• Il modello A monta cerchi del tipo CA e pneumatici del tipo PA
+• Il modello B monta cerchi del tipo CB e pneumatici del tipo PB
+La fornitura di cerchi e pneumatici viene eseguita da 4 nastri trasportatori dedicati, che consegnano tali elementi a un unic o
+deposito, da quale verranno successivamente prelevati dai sistemi robotici dedicati al montaggio.
+Il deposito è caratterizzato da capacità limitate pari a :
+• MaxP: numero massimo di pneumatici (di qualunque tipo) che possono essere contemporaneamente stoccati nel deposito;
+• MaxC: numero massimo di cerchi (di qualunque tipo) che possono essere contemporaneamente stoccati nel deposito;
+In particolare, gli pneumatici vengono immessi nel deposito da due nastri trasportatori:
+• uno dedicato al trasporto degli pneumatici PA
+• l’altro per il trasporto degli pneumatici PB.
+Analogamente, i cerchi vengono immessi da due nastri trasportatori:
+• uno dedicato al trasporto dei cerchi CA;
+• l’altro per il trasporto dei CB.
+Ogni nastro consegna a istanti non predicibili un oggetto alla volta (cerchio o pneumatico) al deposito.
+27
+Il montaggio di cerchi e pneumatici è svolto da due sistemi robotici (o robot): uno per il modello A e uno per il modello
+B.
+Ogni robot è attrezzato con un braccio in grado di montare sia cerchi che pneumatici.
+Per il montaggio delle ruote di un’auto*, ognuno dei due robot procede quindi come segue. Per ognuna delle 4
+quattro ruote:
+• preleva un cerchio e lo monta;
+• preleva uno pneumatico e lo monta.
+Il deposito dovrà gestire gli accessi da parte dei nastri e dei robot in modo da soddisfare i vincoli dati, ed inoltre i
+seguenti vincoli di priorità:
+• nell’immissione venga data la precedenza a pneumatici e cerchi del tipo corrispondente al modello di auto con il
+minor numero di montaggi ruote completati;
+• nel prelievo venga data la precedenza a pneumatici e cerchi del tipo corrispondente al modello di auto con il
+minor numero di montaggi ruote completati;
+Realizzare un’applicazione concorrente da sviluppare in go nella quale i nastri trasportatori e i robot siano
+rappresentati da goroutine concorrenti, ed il deposito sia una risorsa a disposizione degli utenti.
+La sincronizzazione tra le goroutine dovrà tenere conto di tutti i vincoli dati.
+L’applicazione dovrà terminare dopo il montaggio delle ruote di TOT auto.
+* Per “montaggio ruote” si intende il montaggio di tutte e 4 le ruote (cerchi e pneumatici) di un’auto.

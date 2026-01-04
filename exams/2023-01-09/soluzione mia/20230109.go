@@ -325,9 +325,6 @@ func server() {
 			fmt.Println("THE END !!!!!!")
 			done <- true
 			return
-
-		default:
-			time.Sleep(10 * time.Millisecond)
 		}
 	}
 }

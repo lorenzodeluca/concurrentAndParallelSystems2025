@@ -16,3 +16,18 @@ pointer    -> %p
 any type   -> %v
 type       -> %T
 */
+
+
+-----------------------------------------------------------------------------------------------
+In Go la prima lettera del nome ha significato semantico: se è maiuscola l’identificatore è esportato (pubblico, visibile da altri package), se è minuscola è non esportato (privato al package). Questa regola vale per variabili, funzioni, metodi, struct, campi di struct, interfacce e costanti. Conta solo la prima lettera.
+
+Nomi non esportati: camelCase, iniziale minuscola, usati per elementi interni al package.
+Nomi esportati: PascalCase, iniziale maiuscola, usati solo se devono far parte dell’API del package.
+
+Struct esportata con campi minuscoli: dall’esterno non si può accedere a quei campi.
+Costanti seguono le stesse regole (niente ALL_CAPS, non è stile Go).
+Interfacce: nomi brevi, spesso terminano in -er (Reader, Writer), PascalCase se esportate.
+Acronimi restano tutti maiuscoli: ID, HTTP, URL (userID, HTTPServer).
+Package name: sempre minuscolo, singolare, corto, senza underscore o camelCase.
+
+Linee guida generali: nomi brevi ma chiari, niente underscore, esportare solo ciò che serve, lo stile è parte dell’API.
