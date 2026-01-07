@@ -31,9 +31,9 @@ const TEMPO_ATTESA_MAX = 1
 
 // risorse/canali
 var ingressoCorridoioIN [N_UTENTI]chan Richiesta // ingresso corridoio IN
-var uscitaCorridoioIN [N_UTENTI]chan Richiesta   // ingressoSala==uscitaCorridoioIn
+var uscitaCorridoioIN chan Richiesta             // ingressoSala==uscitaCorridoioIn
 var ingressoCorridoioOUT [N_UTENTI]chan Richiesta
-var uscitaCorridoioOUT [N_UTENTI]chan Richiesta
+var uscitaCorridoioOUT chan Richiesta
 
 var closeSignalCmd = make(chan bool)
 var endServerCmd = make(chan bool)
@@ -94,7 +94,7 @@ func cliente(id int, tipo int) {
 
 	//3. Entra nella sala della mostra abbandonando il corridoio;
 	fmt.Printf("[cliente %d/%s] 3. pronto a entrare nella sala della mostra abbandonando il corridoio;\n", id, idToString(tipo))
-	uscitaCorridoioIN[tipo] <- ric
+	uscitaCorridoioIN <- ric
 	<-ric.ack // waiting for server ack
 
 	//4. Visita la mostra
@@ -112,7 +112,7 @@ func cliente(id int, tipo int) {
 
 	//7. Esce dal corridoio in direzione OUT.
 	fmt.Printf("[cliente %d/%s] è pronto ad uscire \n", id, idToString(tipo))
-	uscitaCorridoioOUT[tipo] <- ric
+	uscitaCorridoioOUT <- ric
 	<-ric.ack // waiting for server ack
 
 	fmt.Printf("[cliente %d/%s] è uscito\n", id, idToString(tipo))
@@ -155,7 +155,7 @@ func addetto(id int) {
 
 		//3. Entra nella sala della mostra abbandonando il corridoio;
 		fmt.Printf("[sorvegliante %d] 3. pronto a entrare nella sala della mostra abbandonando il corridoio;\n", id)
-		uscitaCorridoioIN[tipo] <- ric
+		uscitaCorridoioIN <- ric
 		<-ric.ack // waiting for server ack
 
 		//4. Visita la mostra
@@ -173,7 +173,7 @@ func addetto(id int) {
 
 		//7. Esce dal corridoio in direzione OUT.
 		fmt.Printf("[sorvegliante %d] è pronto ad uscire \n", id)
-		uscitaCorridoioOUT[tipo] <- ric
+		uscitaCorridoioOUT <- ric
 		<-ric.ack // waiting for server ack
 
 		fmt.Printf("[sorvegliante %d] è uscito\n", id)
@@ -189,7 +189,7 @@ func server() {
 	var personeInCorridoio [N_DIREZIONI]int //incluse scolaresche e sorveglianti
 	var numSorvegliantiInCorridoioIngresso int
 	var numScolarescheInCorridoio [N_DIREZIONI]int
-
+	ciSonoUtentiInUscita := (len(ingressoCorridoioOUT[ID_SORVEGLIANTI]) + len(ingressoCorridoioOUT[ID_SCOLARESCA]) + len(ingressoCorridoioOUT[ID_VISITATORE_SINGOLO])) > 0
 	//persone := make(map[int]Richiesta)
 	closing := false
 
@@ -218,8 +218,8 @@ func server() {
 
 		//-----------------ingressoCorridoioIN:possono occupare il corridoio le persone solo se so già che ci staranno in sala
 
-		// ingressoCorridoioIN[ID_SORVEGLIANTI], controllando capacità corridoio e sala e dipendenti, controllare se scolaresca in transito nel senso opposto
-		case ric := <-when(closing || (personeInSalaECorridoioInTOT+1 <= N && personeInCorridoioTOT+1 <= NC && sorvegliantiInSala+numSorvegliantiInCorridoioIngresso < MaxS && !scolarescaOUT), ingressoCorridoioIN[ID_SORVEGLIANTI]):
+		// ingressoCorridoioIN[ID_SORVEGLIANTI], controllando capacità corridoio e sala e dipendenti, controllare se scolaresca in transito nel senso opposto, priorità utenti in uscita
+		case ric := <-when(closing || (personeInSalaECorridoioInTOT+1 <= N && personeInCorridoioTOT+1 <= NC && sorvegliantiInSala+numSorvegliantiInCorridoioIngresso < MaxS && !scolarescaOUT && !ciSonoUtentiInUscita), ingressoCorridoioIN[ID_SORVEGLIANTI]):
 			if closing {
 				ric.ack <- -1
 			} else {
@@ -228,37 +228,32 @@ func server() {
 				ric.ack <- 1
 			}
 
-		// ingressoCorridoioIN[ID_VISITATORE_SINGOLO], sorv in sala, controllando capacità corridoio e sala, bisogna dare priorità a sorveglianti, controllare se scolaresca in transito nel senso opposto
-		case ric := <-when(sorvegliantiInSala > 0 && personeInSalaECorridoioInTOT+1 <= N && personeInCorridoioTOT+1 <= NC && !scolarescaOUT && len(ingressoCorridoioIN[ID_SORVEGLIANTI]) == 0, ingressoCorridoioIN[ID_VISITATORE_SINGOLO]):
+		// ingressoCorridoioIN[ID_VISITATORE_SINGOLO], sorv in sala, controllando capacità corridoio e sala, bisogna dare priorità a sorveglianti, controllare se scolaresca in transito nel senso opposto, priorità utenti in uscita
+		case ric := <-when(sorvegliantiInSala > 0 && personeInSalaECorridoioInTOT+1 <= N && personeInCorridoioTOT+1 <= NC && !scolarescaOUT && len(ingressoCorridoioIN[ID_SORVEGLIANTI]) == 0 && !ciSonoUtentiInUscita, ingressoCorridoioIN[ID_VISITATORE_SINGOLO]):
 			personeInCorridoio[ID_DIR_IN]++
 			ric.ack <- 1
 
-		// ingressoCorridoioIN[ID_SCOLARESCA], sorv in sala, controllando capacità corridoio e sala, bisogna dare priorità a sorveglianti e visitatori singoli, controllare se scolaresca in transito nel senso opposto
-		case ric := <-when(sorvegliantiInSala > 0 && personeInSalaECorridoioInTOT+DIMENSIONE_SCOLARESCA <= N && personeInCorridoioTOT+DIMENSIONE_SCOLARESCA <= NC && !scolarescaOUT && len(ingressoCorridoioIN[ID_SORVEGLIANTI]) == 0 && len(ingressoCorridoioIN[ID_VISITATORE_SINGOLO]) == 0, ingressoCorridoioIN[ID_SCOLARESCA]):
+		// ingressoCorridoioIN[ID_SCOLARESCA], sorv in sala, controllando capacità corridoio e sala, bisogna dare priorità a sorveglianti e visitatori singoli, controllare se scolaresca in transito nel senso opposto, priorità utenti in uscita
+		case ric := <-when(sorvegliantiInSala > 0 && personeInSalaECorridoioInTOT+DIMENSIONE_SCOLARESCA <= N && personeInCorridoioTOT+DIMENSIONE_SCOLARESCA <= NC && !scolarescaOUT && len(ingressoCorridoioIN[ID_SORVEGLIANTI]) == 0 && len(ingressoCorridoioIN[ID_VISITATORE_SINGOLO]) == 0 && !ciSonoUtentiInUscita, ingressoCorridoioIN[ID_SCOLARESCA]):
 			personeInCorridoio[ID_DIR_IN] += DIMENSIONE_SCOLARESCA
 			numScolarescheInCorridoio[ID_DIR_IN]++
 			ric.ack <- 1
 
-		//-----------------uscitaCorridoioIn:capienze già controllare in ingresso al corridoio, mi limito a guardare le priorità
-
-		// uscitaCorridoioIn[ID_SORVEGLIANTI],
-		case ric := <-uscitaCorridoioIN[ID_SORVEGLIANTI]:
-			personeInCorridoio[ID_DIR_IN]--
-			numSorvegliantiInCorridoioIngresso--
-			sorvegliantiInSala++
-			ric.ack <- 1
-
-		// uscitaCorridoioIn[ID_VISITATORE_SINGOLO], bisogna dare priorità a sorveglianti
-		case ric := <-when(len(uscitaCorridoioIN[ID_SORVEGLIANTI]) == 0, uscitaCorridoioIN[ID_VISITATORE_SINGOLO]):
-			personeInCorridoio[ID_DIR_IN]--
-			clientiInSala++
-			ric.ack <- 1
-
-		// uscitaCorridoioIn[ID_SCOLARESCA], bisogna dare priorità a sorveglianti e visitatori singoli
-		case ric := <-when(len(uscitaCorridoioIN[ID_SORVEGLIANTI]) == 0 && len(uscitaCorridoioIN[ID_VISITATORE_SINGOLO]) == 0, uscitaCorridoioIN[ID_SCOLARESCA]):
-			personeInCorridoio[ID_DIR_IN] -= DIMENSIONE_SCOLARESCA
-			clientiInSala += DIMENSIONE_SCOLARESCA
-			numScolarescheInCorridoio[ID_DIR_IN]--
+		//-----------------uscitaCorridoioIn
+		case ric := <-uscitaCorridoioIN:
+			switch ric.tipo {
+			case ID_SORVEGLIANTI:
+				personeInCorridoio[ID_DIR_IN]--
+				numSorvegliantiInCorridoioIngresso--
+				sorvegliantiInSala++
+			case ID_VISITATORE_SINGOLO:
+				personeInCorridoio[ID_DIR_IN]--
+				clientiInSala++
+			case ID_SCOLARESCA:
+				personeInCorridoio[ID_DIR_IN] -= DIMENSIONE_SCOLARESCA
+				numScolarescheInCorridoio[ID_DIR_IN]--
+				clientiInSala += DIMENSIONE_SCOLARESCA
+			}
 			ric.ack <- 1
 
 		//-----------------ingressoCorridoioOUT
@@ -282,21 +277,15 @@ func server() {
 			numScolarescheInCorridoio[ID_DIR_OUT]++
 			ric.ack <- 1
 
-		//-----------------uscitaCorridoioOUT:capienze già controllare in ingresso al corridoio, mi limito a guardare le priorità
-		// uscitaCorridoioOUT[ID_SORVEGLIANTI], priorità a visitatori singoli e scolaresche
-		case ric := <-when(len(uscitaCorridoioOUT[ID_VISITATORE_SINGOLO]) == 0 && len(uscitaCorridoioOUT[ID_SCOLARESCA]) == 0, uscitaCorridoioOUT[ID_SORVEGLIANTI]):
-			personeInCorridoio[ID_DIR_OUT]--
-			ric.ack <- 1
-
-		// uscitaCorridoioOUT[ID_VISITATORE_SINGOLO], controllando capacità corridoio, controllare se scolaresca in transito nel senso opposto, dare priorità a scolaresche
-		case ric := <-when(len(uscitaCorridoioOUT[ID_SCOLARESCA]) == 0, uscitaCorridoioOUT[ID_VISITATORE_SINGOLO]):
-			personeInCorridoio[ID_DIR_OUT]--
-			ric.ack <- 1
-
-		// uscitaCorridoioOUT[ID_SCOLARESCA], controllando capacità corridoio, controllare se scolaresca in transito nel senso opposto
-		case ric := <-uscitaCorridoioOUT[ID_SCOLARESCA]:
-			personeInCorridoio[ID_DIR_OUT] -= DIMENSIONE_SCOLARESCA
-			numScolarescheInCorridoio[ID_DIR_OUT]--
+		//-----------------uscitaCorridoioOUT
+		case ric := <-uscitaCorridoioOUT:
+			switch ric.tipo {
+			case ID_SCOLARESCA:
+				personeInCorridoio[ID_DIR_OUT] -= DIMENSIONE_SCOLARESCA
+				numScolarescheInCorridoio[ID_DIR_OUT]--
+			default:
+				personeInCorridoio[ID_DIR_OUT]--
+			}
 			ric.ack <- 1
 
 		case <-closeSignalCmd:
@@ -320,10 +309,10 @@ func main() {
 	*/
 	for i := 0; i < N_UTENTI; i++ {
 		ingressoCorridoioIN[i] = make(chan Richiesta, MAXBUFF)
-		uscitaCorridoioIN[i] = make(chan Richiesta, MAXBUFF)
 		ingressoCorridoioOUT[i] = make(chan Richiesta, MAXBUFF)
-		uscitaCorridoioOUT[i] = make(chan Richiesta, MAXBUFF)
 	}
+	uscitaCorridoioIN = make(chan Richiesta, MAXBUFF)
+	uscitaCorridoioOUT = make(chan Richiesta, MAXBUFF)
 
 	go server()
 	idProg := 0
@@ -343,7 +332,7 @@ func main() {
 	for i := 0; i < N_VISITATORI_SINGOLI+N_SCOLARESCHE; i++ {
 		<-done
 	}
-	fmt.Printf("\n INIZIO CHIUSURA \n")
+	fmt.Printf("\n SERVER: INIZIO CHIUSURA \n")
 	closeSignalCmd <- true
 	for i := 0; i < N_SORVEGLIANTI; i++ {
 		<-done
@@ -351,5 +340,5 @@ func main() {
 	endServerCmd <- true
 	<-done //waiting for server confirmation
 
-	fmt.Printf("\n HO FINITO ")
+	fmt.Printf("\n SERVER: HO FINITO ")
 }
